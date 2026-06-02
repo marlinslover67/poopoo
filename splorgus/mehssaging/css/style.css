@@ -1,0 +1,320 @@
+body, html{
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100%;
+    overflow: hidden;
+}
+
+.site-wrapper {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+}
+
+.top-nav {
+    background-color: rgb(20, 18, 24);
+
+    position: relative;
+
+    width: 100%;
+    height: 60px;
+    top: 0;
+    left: 0;
+
+    border-bottom: rgba(88, 88, 88, 0.171) solid 1px;;
+}
+
+#search-bar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 600px;
+    background-color: rgba(255, 255, 255, 0.055);
+    outline: 2px solid rgba(75, 75, 75, 0.4);
+    border: none;
+    border-radius: 20px;
+    color: rgb(158, 158, 158);
+    padding: 10px;  
+}
+
+#add-game-btn {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+}
+
+#add-game-btn svg{
+    width: 30px;
+    height: 30px;
+    color: rgb(104, 104, 104);
+    transition: color 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#add-game-btn:hover svg {
+    color:  rgb(225, 222, 255);
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    min-height: 0;
+}
+
+.sidebar {
+    background-color: rgb(12, 11, 14);
+
+    width: 60px;
+
+    border-right: rgba(88, 88, 88, 0.151) solid 1px;;
+}
+
+.game-area {
+    flex: 1;
+    background-color: rgb(17, 15, 20);
+
+    display: grid;
+
+    grid-template-columns: repeat(auto-fill, 300px);
+
+    gap: 20px;
+
+    padding: 20px;
+
+    justify-content: center;
+    align-content: start;
+    overflow-y: auto;
+
+    min-height: 0;
+}
+
+.game {
+    width: 300px;
+    height: 200px;
+    background-color: rgb(25, 23, 27);
+
+    border-radius: 5px;
+    box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.452);
+    outline: rgba(228, 228, 228, 0.151) solid 1px;
+    position: relative;
+
+    transition:
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        outline 0.3s ease;
+    overflow: hidden;
+}
+
+.game:hover {
+    transform: scale(1.02) translateY(-3px);
+
+    cursor: pointer;
+    outline: rgba(88, 82, 143, 0.5) solid 1px;
+
+    box-shadow: 8px 13px 10px rgba(0, 0, 0, 0.452);
+}
+
+.game-img {
+    position: relative;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+}
+
+.game:hover .game-img {
+    transform: scale(1.02);
+}
+
+.game:hover .game-title {
+    color:  rgb(225, 222, 255);
+}
+
+.game-img::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    background-image: linear-gradient(to bottom, rgba(90, 90, 90, 0.322), rgb(20, 20, 20));
+}
+
+.game:hover .game-img::before {
+    opacity: 0.5;
+}
+
+.game-title {
+    color: rgb(192, 192, 192);
+    position: absolute;
+    font-size: 15px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin: 5px;
+    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#start-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.774);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#login-section {
+    width:600px;
+    height: 200px;
+    display: flex;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#login-section h1 {
+    color: white;
+    user-select: none;
+}
+
+#login-section input {
+    width: 300px;
+    background-color: rgba(255, 255, 255, 0.055);
+    outline: 2px solid rgba(75, 75, 75, 0.4);
+    border: none;
+    border-radius: 10px;
+    margin: 3px;
+    color: rgb(158, 158, 158);
+    padding: 5px;
+}
+
+#login-section button {
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px;
+    width: 100px;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#login-section button:hover {
+    cursor: pointer;
+    background-color: rgb(146, 146, 146);
+    color: rgb(0, 0, 0);
+}
+
+#add-game-wrapper{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#add-game-wrapper.visible{
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#add-game-modal {
+    background-color: #0c0b0f;
+    width: 450px;
+    height: 450px;
+    z-index: 10;
+    border-radius: 5px;
+    border: rgba(107, 107, 107, 0.363) solid 1px;;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+#gamePictureInputLabel{
+    width: 100%;
+    aspect-ratio: 3/2;
+    border:2px dashed #7474747a;
+    border-radius: 5px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    background-size:cover;
+    background-position:center;
+    color: white;
+}
+
+#gamePictureInputLabel.dragover{
+    border-color:#4CAF50;
+    background-color:rgba(0,0,0,0.05);
+}
+
+#gamePictureInputLabel svg{
+    width:40px;
+    height:40px;
+    opacity:0.6;
+    color: white;
+}
+
+#fileNameDisplay {
+    color: white;
+    margin-top: 10px;
+}
+
+#add-game-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 5px 0;
+}
+
+#add-game-fields input {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.055);
+    outline: 2px solid rgba(75, 75, 75, 0.4);
+    border: none;
+    border-radius: 10px;
+    margin: 3px 0;
+    color: rgb(158, 158, 158);
+    padding: 5px;
+
+}
+
+#ag-submit-btn {
+    border-radius: 5px;
+    padding: 5px;
+    width: 100px;
+    background-color: rgb(227, 216, 255);
+    border: none;
+    transition: background-color 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    color: #0c0b0f;
+}
+
+#ag-submit-btn:hover {
+    cursor: pointer;
+    background-color: rgb(142, 133, 165);
+}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<link rel="stylesheet" href="./css/style.css">
+<link rel="icon" type="image/x-icon" href="https://andrewlovesmillie.com/assets/icons/canvas.ico"></head>
+
+<body>
+
+    <div id="start-page">
+        <div id="login-section">
+            <h1>Login</h1>
+            <input type="text" name="username" id="un-li" placeholder="Username">
+            <input type="password" id="pw-li" placeholder="Password">
+            <button type="submit">Login</button>
+        </div>
+    </div>
+
+    <div id="add-game-wrapper">
+        <div id="add-game-modal">
+            <input type="file" id="gamePictureInput" accept="image/*" hidden>
+                    <label for="gamePictureInput" id="gamePictureInputLabel">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> 
+                            <path d="M10.5,23H4.5c-1.93,0-3.5-1.57-3.5-3.5V4.5c0-1.93,1.57-3.5,3.5-3.5h5.515c.334,0,.664,.03,.985,.087V6.5c0,1.378,1.122,2.5,2.5,2.5h5.813c.317,.008,.571-.319,.484-.624-.289-1.13-.877-2.163-1.702-2.987l-3.485-3.485c-1.228-1.228-2.86-1.904-4.596-1.904H4.5C2.019,0,0,2.019,0,4.5v15c0,2.481,2.019,4.5,4.5,4.5h6c.276,0,.5-.224,.5-.5s-.224-.5-.5-.5ZM12,1.368c.706,.272,1.353,.692,1.904,1.243l3.485,3.485c.542,.542,.964,1.192,1.24,1.904h-5.129c-.827,0-1.5-.673-1.5-1.5V1.368Zm5.5,9.632c-3.584,0-6.5,2.916-6.5,6.5s2.916,6.5,6.5,6.5,6.5-2.916,6.5-6.5-2.916-6.5-6.5-6.5Zm0,12c-3.033,0-5.5-2.467-5.5-5.5s2.467-5.5,5.5-5.5,5.5,2.467,5.5,5.5-2.467,5.5-5.5,5.5Zm.991-9.088c-.526-.547-1.477-.547-2.002,.002l-1.854,1.831c-.273,.319-.334,.754-.158,1.136s.546,.619,.966,.619h1.558v3c0,.276,.224,.5,.5,.5s.5-.224,.5-.5v-3h1.551c.421,0,.792-.238,.967-.621s.113-.819-.19-1.167l-1.836-1.8Zm1.06,2.588h-4.109l-.077-.074,1.828-1.802c.155-.164,.437-.166,.594,0l1.838,1.801-.075,.076Z"/>
+                        </svg>
+                    </label>
+            <div id="fileNameDisplay">No file selected</div>
+
+            <div id="add-game-fields">
+                <input type="text" id="ag-name" placeholder="Game name">
+                <input type="url" id="ag-url" placeholder="URL to game">
+            </div>
+            <input type="submit" value="Add to library" id="ag-submit-btn">
+        </div>
+    </div>
+
+<div class="site-wrapper">
+    <nav class="top-nav">
+        <input type="search" id="search-bar" placeholder="Search">
+        <div id="add-game-btn">
+            <svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title/><g id="Complete"><g data-name="add" id="add-2"><g><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12" x2="12" y1="19" y2="5"/><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="5" x2="19" y1="12" y2="12"/></g></g></g></svg>
+        </div>
+    </nav>
+
+    <main class="main">
+        <aside class="sidebar"></aside>
+        <div class="game-area" id="game-area"></div>
+    </main>
+</div>
+
+<script type="module" src="main.js" defer></script>
+
+</body>
+</html>

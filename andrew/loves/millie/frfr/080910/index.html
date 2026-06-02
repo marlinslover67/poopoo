@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Library</title>
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+}
+.background {
+    position: fixed;
+    inset: 0;
+    z-index: -100;
+}
+.background video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.site-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 60px 50px 50px 50px;
+}
+.game-area {
+    width: 100%;
+    max-width: 1100px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    justify-items: center;
+    align-items: start;
+    margin-bottom: 50px;
+}
+.game-card {
+    box-sizing: border-box;
+    padding: 10px;
+    width: 100%;
+    max-width: 260px;
+    background-color: rgba(155,155,155,0.164);
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.game-card:hover {
+    box-shadow: 0 0 50px rgba(255,255,255,0.2);
+    transform: scale(1.03);
+    cursor: pointer;
+}
+.game-card div:first-child {
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+.game-card img {
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 10px;
+    user-select: none;
+}
+.game-card div.title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: rgb(221,221,221);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 8px 4px;
+    user-select: none;
+    overflow: hidden;
+}
+.gui {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+}
+.gui-row {
+    display: flex;
+}
+.gui-top-bar {
+    height: 40px;
+    flex: 1;
+    backdrop-filter: blur(5px) brightness(0.8);
+    background-color: rgba(255,255,255,0.068);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: auto;
+}
+.gui-body {
+    display: flex;
+    height: calc(100vh - 40px);
+}
+.search-bar {
+    width: 400px;
+    padding: 5px 17px;
+    border: none;
+    border-radius: 20px;
+    background-color: rgba(68, 68, 68, 0.548);
+    outline: 1px solid rgb(97,97,97);
+    color: rgb(221,221,221);
+    font-size: 14px;
+}
+.add-menu {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 34px;
+    padding: 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(5px);
+    background-color: rgba(255,255,255,0.068);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    pointer-events: auto;
+    z-index: 10;
+}
+.add-menu svg {
+    width: 24px;
+    fill: rgb(170,170,170);
+    transition: 0.3s;
+}
+.add-menu svg:hover {
+    fill: white;
+}
+.add-menu svg.open {
+    transform: rotateX(180deg);
+}
+.big-add-menu {
+    position: fixed;
+    left: 50%;
+    bottom: -260px;
+    transform: translateX(-50%);
+    width: 320px;
+    padding: 15px;
+    display: grid;
+    grid-template-rows: 90px auto 1fr;
+    gap: 10px;
+    backdrop-filter: blur(5px);
+    background: rgba(255,255,255,0.07);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    pointer-events: auto;
+    transition: 0.5s;
+}
+.big-add-menu.open {
+    bottom: 80px;
+}
+#gamePictureInputLabel {
+    height: 90px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+#gamePictureInputLabel.dragover {
+    border-color: white;
+    background: rgba(255,255,255,0.1);
+}
+#gamePictureInputLabel svg {
+    width: 44px;
+    fill: rgba(180,180,180,0.178);
+}
+#fileNameDisplay {
+    text-align: center;
+    font-size: 13px;
+    color: rgb(200,200,200);
+    word-break: break-all;
+}
+.gameAddInputArea {
+    display: grid;
+    gap: 8px;
+}
+.gameAddInputArea input {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(40,40,40,0.6);
+    color: #ddd;
+    outline: 1px solid rgba(255,255,255,0.15);
+}
+
+.settings {
+    width: 32px;
+    fill: rgb(170,170,170);
+    transition: 0.3s;
+}
+
+.settings:hover {
+    fill: white;
+}
+
+.settings-box {
+    width: 40px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.settings-menu {
+    pointer-events: auto;
+    display: grid;
+    width: 200px;
+    padding: 15px;
+    backdrop-filter: blur(5px);
+    background: rgba(255,255,255,0.07);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    position: fixed;
+    top: -350px;
+    left: 20px;
+    transition: all 0.5s ease;
+    z-index: -1;
+    grid-template-rows: 20px auto 1fr;
+}
+
+.settings-menu.open {
+    top: 60px;
+}
+
+
+
+</style>
+
+<link id="dynamicFavicon" rel="icon" href="https://andrewlovesmillie.com/assets/icons/clever.ico">
+
+</head>
+<body>
+<div class="background">
+    <video src="https://andrewlovesmillie.com/assets/bg.mp4" autoplay muted loop></video>
+</div>
+
+<div class="site-wrapper">
+    <div class="game-area"></div>
+</div>
+
+<div class="gui">
+
+    <div class="gui-row">
+        <div class="gui-corner"></div>
+        <div class="gui-top-bar">
+            <div class="settings-box">
+                <svg onclick="document.getElementById('settingsMenu').classList.toggle('open')" class="settings" xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24">
+                <path d="M9.8,9.802c-.755,.753-1.122,1.476-1.122,2.208,0,.957,.64,1.706,1.122,2.187,.74,.739,1.47,1.108,2.2,1.108s1.46-.37,2.2-1.108c.755-.753,1.122-1.476,1.122-2.208,0-.957-.64-1.706-1.122-2.187-1.48-1.478-2.92-1.478-4.4,0Zm3.694,3.688c-1.251,1.248-2.042,.944-2.988,0-.565-.564-.828-1.034-.828-1.479,0-.454,.271-.944,.828-1.5,.583-.582,1.065-.826,1.511-.826,.511,0,.972,.322,1.478,.826,.565,.564,.828,1.034,.828,1.479,0,.454-.271,.944-.828,1.5Z"/>
+                <g>
+                    <path d="M9.8,9.802c-.755,.753-1.122,1.476-1.122,2.208,0,.957,.64,1.706,1.122,2.187,.74,.739,1.47,1.108,2.2,1.108s1.46-.37,2.2-1.108c.755-.753,1.122-1.476,1.122-2.208,0-.957-.64-1.706-1.122-2.187-1.48-1.478-2.92-1.478-4.4,0Zm3.694,3.688c-1.251,1.248-2.042,.944-2.988,0-.565-.564-.828-1.034-.828-1.479,0-.454,.271-.944,.828-1.5,.583-.582,1.065-.826,1.511-.826,.511,0,.972,.322,1.478,.826,.565,.564,.828,1.034,.828,1.479,0,.454-.271,.944-.828,1.5Z"/>
+                    <path d="M23.019,11.948c.008-1.595-.817-2.481-2.521-2.7-.188-.394-.417-.787-.694-1.188,1.205-1.456,1.21-2.694,.026-3.876-1.183-1.181-2.425-1.175-3.884,.029-.401-.274-.794-.501-1.188-.688-.217-1.706-1.134-2.524-2.705-2.524-1.602,.008-2.495,.849-2.725,2.569-.392,.189-.791,.421-1.19,.691-1.451-1.197-2.694-1.194-3.89,0-1.178,1.175-1.18,2.448-.001,3.882-.273,.4-.506,.798-.696,1.189-1.719,.229-2.56,1.122-2.568,2.721-.008,1.595,.817,2.481,2.521,2.7,.188,.394,.417,.787,.694,1.188-1.205,1.456-1.21,2.694-.026,3.876,1.184,1.182,2.425,1.176,3.884-.029,.401,.274,.794,.501,1.188,.688,.216,1.697,1.113,2.524,2.682,2.524,1.605,0,2.519-.849,2.749-2.569,.392-.189,.791-.421,1.19-.691,1.451,1.197,2.694,1.193,3.89,0,1.178-1.175,1.18-2.448,.001-3.882,.273-.4,.506-.798,.696-1.189,1.719-.229,2.56-1.122,2.568-2.721Zm-3.36,2.053c-.227,.515-.544,1.051-.942,1.594-.142,.193-.127,.459,.036,.635,1.373,1.487,.898,2.2,.295,2.802-.63,.628-1.321,1.078-2.812-.295-.175-.162-.44-.176-.634-.036-.541,.395-1.077,.71-1.595,.937-.167,.073-.282,.232-.297,.415-.139,1.615-.779,1.942-1.766,1.947-1.008-.027-1.609-.304-1.734-1.9-.015-.186-.131-.348-.302-.421-.521-.222-1.041-.526-1.588-.929-.089-.065-.193-.097-.296-.097-.122,0-.243,.044-.338,.132-1.503,1.383-2.211,.919-2.807,.324-.595-.594-1.06-1.299,.323-2.797,.163-.177,.178-.444,.035-.637-.4-.541-.716-1.075-.937-1.588-.073-.17-.234-.286-.419-.301-1.587-.126-1.903-.755-1.898-1.729,.005-.984,.333-1.622,1.946-1.761,.182-.016,.341-.129,.415-.296,.227-.515,.544-1.051,.942-1.594,.142-.193,.127-.459-.036-.635-1.373-1.487-.898-2.2-.295-2.802,.606-.604,1.321-1.08,2.812,.295,.176,.163,.441,.178,.634,.036,.541-.395,1.077-.71,1.595-.937,.167-.073,.282-.232,.297-.415,.139-1.615,.779-1.942,1.766-1.947,.99-.027,1.608,.304,1.734,1.9,.015,.186,.131,.348,.302,.421,.521,.222,1.041,.526,1.588,.929,.193,.142,.458,.127,.635-.035,1.504-1.382,2.212-.918,2.807-.324,.595,.594,1.06,1.299-.323,2.797-.163,.177-.178,.444-.035,.637,.4,.541,.716,1.075,.937,1.588,.073,.17,.234,.286,.419,.301,1.587,.126,1.903,.755,1.898,1.729-.005,.984-.333,1.622-1.946,1.761-.182,.016-.341,.129-.415,.296Z"/>
+                </g>
+                </svg>
+            </div>
+            <input class="search-bar" placeholder="Search games...">
+            <div>
+                <input 
+                    id="custom" 
+                    class="search-bar" 
+                    name="site-open" 
+                    style="width: 400px; border-radius: 20px 0px 0px 20px;" 
+                    placeholder="Search site, press enter to open... EX: https://andrewlovesmillie.com"
+                    onkeydown="if(event.key === 'Enter'){ openSite(this.value); }">
+            </div>
+        </div>
+    </div>
+    <div class="gui-body">
+        <div class="gui-left-bar"></div>
+    </div>
+
+    <div class="add-menu">
+        <svg id="Outline" onclick="Outline.classList.toggle('open'); addGameMenu.classList.toggle('open');" viewBox="0 0 24 24">
+            <path d="M18,15.5a1,1,0,0,1-.71-.29l-4.58-4.59a1,1,0,0,0-1.42,0L6.71,15.21a1,1,0,0,1-1.42-1.42L9.88,9.21a3.06,3.06,0,0,1,4.24,0l4.59,4.58a1,1,0,0,1,0,1.42A1,1,0,0,1,18,15.5Z"/>
+        </svg>
+        <svg onclick="handleAddGame()" viewBox="0 0 24 24">
+            <path d="m5,10c0-.552.448-1,1-1h3v-3c0-.552.448-1,1-1s1,.448,1,1v3h3c.552,0,1,.448,1,1s-.448,1-1,1h-3v3c0,.552-.448,1-1,1s-1-.448-1-1v-3h-3c-.552,0-1-.448-1-1Z"/>
+        </svg>
+    </div>
+
+    <div id="settingsMenu" class="settings-menu">
+        <label style="color:#ddd;font-size:14px; user-select: none;">Site preset</label>
+        <select id="presetSelect" style="
+            margin-top:6px;
+            padding:6px 10px;
+            border-radius:10px;
+            border:none;
+            background:rgba(40,40,40,0.6);
+            color:#ddd;
+            outline:1px solid rgba(255,255,255,0.15);
+        ">
+        </select>
+    </div>
+
+
+    <div class="big-add-menu" id="addGameMenu">
+        <input type="file" id="gamePictureInput" accept="image/*" hidden>
+        <label for="gamePictureInput" id="gamePictureInputLabel">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> 
+                <path d="M10.5,23H4.5c-1.93,0-3.5-1.57-3.5-3.5V4.5c0-1.93,1.57-3.5,3.5-3.5h5.515c.334,0,.664,.03,.985,.087V6.5c0,1.378,1.122,2.5,2.5,2.5h5.813c.317,.008,.571-.319,.484-.624-.289-1.13-.877-2.163-1.702-2.987l-3.485-3.485c-1.228-1.228-2.86-1.904-4.596-1.904H4.5C2.019,0,0,2.019,0,4.5v15c0,2.481,2.019,4.5,4.5,4.5h6c.276,0,.5-.224,.5-.5s-.224-.5-.5-.5ZM12,1.368c.706,.272,1.353,.692,1.904,1.243l3.485,3.485c.542,.542,.964,1.192,1.24,1.904h-5.129c-.827,0-1.5-.673-1.5-1.5V1.368Zm5.5,9.632c-3.584,0-6.5,2.916-6.5,6.5s2.916,6.5,6.5,6.5,6.5-2.916,6.5-6.5-2.916-6.5-6.5-6.5Zm0,12c-3.033,0-5.5-2.467-5.5-5.5s2.467-5.5,5.5-5.5,5.5,2.467,5.5,5.5-2.467,5.5-5.5,5.5Zm.991-9.088c-.526-.547-1.477-.547-2.002,.002l-1.854,1.831c-.273,.319-.334,.754-.158,1.136s.546,.619,.966,.619h1.558v3c0,.276,.224,.5,.5,.5s.5-.224,.5-.5v-3h1.551c.421,0,.792-.238,.967-.621s.113-.819-.19-1.167l-1.836-1.8Zm1.06,2.588h-4.109l-.077-.074,1.828-1.802c.155-.164,.437-.166,.594,0l1.838,1.801-.075,.076Z"/>
+            </svg>
+        </label>
+        <div id="fileNameDisplay">No file selected</div>
+        <div class="gameAddInputArea">
+            <input type="text" id="gameNameInput" placeholder="Game name...">
+            <input type="text" id="gameUrlInput" placeholder="Game URL...">
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { openDB } from 'https://unpkg.com/idb?module';
+
+document.addEventListener('keydown', async (e) => {
+    if (e.altKey && e.key === 'p') {
+        if (!confirm('Clear all stored data?')) return;
+        indexedDB.deleteDatabase('zeepzorp');
+        location.reload();
+    }
+});
+
+
+
+async function init() {
+
+    const db = await openDB('zeepzorp', 3, {
+        upgrade(upgradeDB) {
+            if (!upgradeDB.objectStoreNames.contains('games')) {
+                upgradeDB.createObjectStore('games', { keyPath: 'id', autoIncrement: true });
+            }
+            if (!upgradeDB.objectStoreNames.contains('settings')) {
+                upgradeDB.createObjectStore('settings');
+            }
+        }
+
+    });
+
+    const presets = {
+        default: {
+            name: 'Default (Clever)',
+            title: 'Clever | Portal',
+            favicon: 'https://andrewlovesmillie.com/assets/icons/clever.ico'
+        },
+        canvas: {
+            name: 'Canvas',
+            title: 'Dashboard',
+            favicon: 'https://andrewlovesmillie.com/assets/icons/canvas.ico'
+        },
+        amplify: {
+            name: 'Amplify',
+            title: 'Amplify Curriculum | Science Middle School |',
+            favicon: 'https://andrewlovesmillie.com/assets/icons/amplify.ico'
+        },
+        googledocs: {
+            name: 'Google Docs',
+            title: 'Google Docs',
+            favicon: 'https://andrewlovesmillie.com/assets/icons/googledocs.ico'
+        },
+        ireadym: {
+            name: 'I-Ready (Math)',
+            title: 'Math My Path, i-Ready',
+            favicon: 'https://andrewlovesmillie.com/assets/icons/iready.ico'
+        },
+       ireadyr: {
+            name: 'I-Ready (Reading)',
+            title: 'Reading My Path, i-Ready',
+            favicon: 'https://andrewlovesmillie.com/assets/icons/iready.ico'
+        }
+    };
+
+    const DEFAULT_GAMES = [
+        {
+            name: 'A Dance of Fire and Ice',
+            url: 'https://andrewlovesmillie.com/adofai',
+            img: 'https://andrewlovesmillie.com/adofai/icon.png'
+        },
+        {
+            name: 'Basketball Stars',
+            url: 'https://andrewlovesmillie.com/basketball-stars',
+            img: 'https://andrewlovesmillie.com/basketball-stars/icon.png'
+        },
+        {
+            name: 'The Binding of Isaac',
+            url: 'https://andrewlovesmillie.com/binding-of-isaac',
+            img: 'https://andrewlovesmillie.com/binding-of-isaac/icon.png'
+        },
+        {
+            name: 'Bitlife',
+            url: 'https://andrewlovesmillie.com/bitlife',
+            img: 'https://andrewlovesmillie.com/bitlife/icon.png'
+        },
+        {
+            name: 'Bloxorz',
+            url: 'https://andrewlovesmillie.com/bloxorz',
+            img: 'https://andrewlovesmillie.com/bloxorz/icon.png'
+        },
+        {
+            name: 'Bloons Tower Defense 5',
+            url: 'https://andrewlovesmillie.com/btd5',
+            img: 'https://andrewlovesmillie.com/btd5/icon.png'
+        },
+        {
+            name: 'Celeste Pico',
+            url: 'https://andrewlovesmillie.com/celeste-pico',
+            img: 'https://andrewlovesmillie.com/celeste-pico/icon.png'
+        },
+        {
+            name: 'Cookie Clicker',
+            url: 'https://andrewlovesmillie.com/cookie-clicker',
+            img: 'https://andrewlovesmillie.com/cookie-clicker/icon.png'
+        },
+        {
+            name: 'Crazy Chicken 3D',
+            url: 'https://andrewlovesmillie.com/crazy-chicken-3d',
+            img: 'https://andrewlovesmillie.com/crazy-chicken-3d/icon.png'
+        },
+        {
+            name: 'Deltarune',
+            url: 'https://andrewlovesmillie.com/deltarune',
+            img: 'https://andrewlovesmillie.com/deltarune/icon.png'
+        },
+        {
+            name: 'Drive Mad',
+            url: 'https://andrewlovesmillie.com/drive-mad',
+            img: 'https://andrewlovesmillie.com/drive-mad/icon.png'
+        },
+        {
+            name: 'Friday Night Funkin\'',
+            url: 'https://andrewlovesmillie.com/fnf',
+            img: 'https://andrewlovesmillie.com/fnf/icon.png'
+        },
+        {
+            name: 'Geometry Dash Lite',
+            url: 'https://andrewlovesmillie.com/geometry-dash',
+            img: 'https://andrewlovesmillie.com/geometry-dash/icon.png'
+        },
+        {
+            name: 'Github',
+            url: 'https://andrewlovesmillie.com/github',
+            img: 'https://andrewlovesmillie.com/github/icon.png'
+        },
+        {
+            name: 'Little Alchemy 2',
+            url: 'https://andrewlovesmillie.com/little-alchemy',
+            img: 'https://andrewlovesmillie.com/little-alchemy/icon.png'
+        },
+        {
+            name: 'Minecraft',
+            url: 'https://andrewlovesmillie.com/minecraft',
+            img: 'https://andrewlovesmillie.com/minecraft/icon.png'
+        },
+        {
+            name: 'Mario Kart 64 ',
+            url: 'https://andrewlovesmillie.com/mk64',
+            img: 'https://andrewlovesmillie.com/mk64/icon.png'
+        },
+        {
+            name: 'Oneshot',
+            url: 'https://andrewlovesmillie.com/oneshot',
+            img: 'https://andrewlovesmillie.com/oneshot/icon.png'
+        },
+        {
+            name: 'Osu',
+            url: 'https://andrewlovesmillie.com/osu',
+            img: 'https://andrewlovesmillie.com/osu/icon.png'
+        },
+        {
+            name: 'OvO',
+            url: 'https://andrewlovesmillie.com/ovo',
+            img: 'https://andrewlovesmillie.com/ovo/icon.png'
+        },
+        {
+            name: 'Peggle',
+            url: 'https://andrewlovesmillie.com/peggle',
+            img: 'https://andrewlovesmillie.com/peggle/icon.png'
+        },
+        {
+            name: 'Pixel Speedrun',
+            url: 'https://andrewlovesmillie.com/pixel-speedrun',
+            img: 'https://andrewlovesmillie.com/pixel-speedrun/icon.png'
+        },
+        {
+            name: 'Plants vs Zombies',
+            url: 'https://andrewlovesmillie.com/pvz',
+            img: 'https://andrewlovesmillie.com/pvz/icon.png'
+        },
+        {
+            name: 'Plants vs Zombies 2',
+            url: 'https://andrewlovesmillie.com/pvz2',
+            img: 'https://andrewlovesmillie.com/pvz2/icon.png'
+        },
+        {
+            name: 'Ragdoll Archers',
+            url: 'https://andrewlovesmillie.com/ragdoll-archers',
+            img: 'https://andrewlovesmillie.com/ragdoll-archers/icon.png'
+        },
+        {
+            name: 'Retro Bowl',
+            url: 'https://andrewlovesmillie.com/retro-bowl',
+            img: 'https://andrewlovesmillie.com/retro-bowl/icon.png'
+        },
+        {
+            name: 'Retro Bowl College',
+            url: 'https://andrewlovesmillie.com/retro-bowl-college',
+            img: 'https://andrewlovesmillie.com/retro-bowl-college/icon.png'
+        },
+        {
+            name: 'Slope',
+            url: 'https://andrewlovesmillie.com/slope',
+            img: 'https://andrewlovesmillie.com/slope/icon.png'
+        },
+        {
+            name: 'Super Mario 64',
+            url: 'https://andrewlovesmillie.com/sm64',
+            img: 'https://andrewlovesmillie.com/sm64/icon.png'
+        },
+        {
+            name: 'Snow Rider',
+            url: 'https://andrewlovesmillie.com/snow-rider',
+            img: 'https://andrewlovesmillie.com/snow-rider/icon.png'
+        },
+        {
+            name: 'Subway Surfers',
+            url: 'https://andrewlovesmillie.com/subway-surfers',
+            img: 'https://andrewlovesmillie.com/subway-surfers/icon.png'
+        },
+        {
+            name: 'Suika Game',
+            url: 'https://andrewlovesmillie.com/suika-game',
+            img: 'https://andrewlovesmillie.com/suika-game/icon.png'
+        },
+        {
+            name: 'Undertale',
+            url: 'https://andrewlovesmillie.com/undertale',
+            img: 'https://andrewlovesmillie.com/undertale/icon.png'
+        },
+        {
+            name: 'Wasm Loader',
+            url: 'https://andrewlovesmillie.com/wasm',
+            img: 'https://andrewlovesmillie.com/wasm/icon.png'
+        },
+        {
+            name: 'Webfishing',
+            url: 'https://andrewlovesmillie.com/webfishing',
+            img: 'https://andrewlovesmillie.com/webfishing/icon.png'
+        },
+        {
+            name: '3Dash',
+            url: 'https://andrewlovesmillie.com/3dash',
+            img: 'https://andrewlovesmillie.com/3dash/icon.png'
+        },
+        {
+            name: 'Amanda the Adventurer',
+            url: 'https://andrewlovesmillie.com/amanda-the-adventurer',
+            img: 'https://andrewlovesmillie.com/amanda-the-adventurer/icon.png'
+        },
+        {
+            name: 'Bloodmoney',
+            url: 'https://andrewlovesmillie.com/bloodmoney',
+            img: 'https://andrewlovesmillie.com/bloodmoney/icon.png'
+        },
+        {
+            name: 'Drift Boss',
+            url: 'https://andrewlovesmillie.com/drift-boss',
+            img: 'https://andrewlovesmillie.com/drift-boss/icon.png'
+        },
+        {
+            name: 'Idle Breakout',
+            url: 'https://andrewlovesmillie.com/idle-breakout',
+            img: 'https://andrewlovesmillie.com/idle-breakout/icon.png'
+        },
+        {
+            name: 'Minecraft 1.20.1',
+            url: 'https://andrewlovesmillie.com/minecraft-1.20.1',
+            img: 'https://andrewlovesmillie.com/minecraft-1.20.1/icon.png'
+        },
+        {
+            name: 'Paper.io 2',
+            url: 'https://andrewlovesmillie.com/paper.io-2',
+            img: 'https://andrewlovesmillie.com/paper.io-2/icon.png'
+        },
+        {
+            name: 'Superhot',
+            url: 'https://andrewlovesmillie.com/superhot',
+            img: 'https://andrewlovesmillie.com/superhot/icon.png'
+        },
+        {
+            name: 'Ultrakill',
+            url: 'https://andrewlovesmillie.com/ultrakill',
+            img: 'https://andrewlovesmillie.com/ultrakill/icon.png'
+        },
+        {
+            name: 'Celeste',
+            url: 'https://andrewlovesmillie.com/celeste',
+            img: 'https://andrewlovesmillie.com/celeste/icon.png'
+        },
+        {
+            name: 'Recoil',
+            url: 'https://andrewlovesmillie.com/recoil',
+            img: 'https://andrewlovesmillie.com/recoil/icon.png'
+        },
+        {
+            name: 'Crazy Cattle 3D',
+            url: 'https://andrewlovesmillie.com/crazy-cattle-3d',
+            img: 'https://andrewlovesmillie.com/crazy-cattle-3d/icon.png'
+        },
+        {
+            name: 'Crazy Kitty 3D',
+            url: 'https://andrewlovesmillie.com/crazy-kitty-3d',
+            img: 'https://andrewlovesmillie.com/crazy-kitty-3d/icon.png'
+        },
+        {
+            name: 'Hollow Night',
+            url: 'https://andrewlovesmillie.com/hollow-night',
+            img: 'https://andrewlovesmillie.com/hollow-night/icon.png'
+        },
+        {
+            name: 'In Stars and Time',
+            url: 'https://andrewlovesmillie.com/in-stars-and-time',
+            img: 'https://andrewlovesmillie.com/in-stars-and-time/icon.png'
+        },
+        {
+            name: 'Sandboxels',
+            url: 'https://andrewlovesmillie.com/sandboxels',
+            img: 'https://andrewlovesmillie.com/sandboxels/icon.png'
+        },
+        {
+            name: 'Tomb of the Mask',
+            url: 'https://andrewlovesmillie.com/tomb-of-the-mask',
+            img: 'https://andrewlovesmillie.com/tomb-of-the-mask/icon.png'
+        },
+        {
+            name: 'Tomodachi Collection',
+            url: 'https://andrewlovesmillie.com/tomodachi-collection',
+            img: 'https://andrewlovesmillie.com/tomodachi-collection/icon.png'
+        },
+        {
+            name: 'The Worlds Hardest Game',
+            url: 'https://andrewlovesmillie.com/twhg',
+            img: 'https://andrewlovesmillie.com/twhg/icon.png'
+        },
+        {
+            name: 'World Box',
+            url: 'https://andrewlovesmillie.com/world-box',
+            img: 'https://andrewlovesmillie.com/world-box/icon.png'
+        },
+        {
+            name: 'Yume Nikki',
+            url: 'https://andrewlovesmillie.com/yume-nikki',
+            img: 'https://andrewlovesmillie.com/yume-nikki/icon.png'
+        },
+    ];
+
+
+    const presetSelect = document.getElementById('presetSelect');
+
+    for (const key in presets) {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = presets[key].name;
+        presetSelect.appendChild(opt);
+    }
+
+    const savedPreset = await db.get('settings', 'preset') || 'default';
+    presetSelect.value = savedPreset;
+    applyPreset(savedPreset);
+
+    presetSelect.addEventListener('change', async e => {
+        const value = e.target.value;
+        await db.put('settings', value, 'preset');
+        applyPreset(value);
+    });
+
+
+    function applyPreset(presetKey) {
+        const preset = presets[presetKey];
+        if (!preset) return;
+
+        document.title = preset.title;
+        document.getElementById('dynamicFavicon').href = preset.favicon;
+    }
+
+
+    const gameArea = document.querySelector('.game-area');
+    const fileInput = document.getElementById('gamePictureInput');
+    const label = document.getElementById('gamePictureInputLabel');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const gameNameInput = document.getElementById('gameNameInput');
+    const gameUrlInput = document.getElementById('gameUrlInput');
+    const searchBar = document.querySelector('.search-bar');
+
+    function setFile(file) {
+        if (file) fileNameDisplay.textContent = file.name;
+    }
+
+    fileInput.addEventListener('change', () => setFile(fileInput.files[0]));
+    label.addEventListener('dragover', e => { e.preventDefault(); label.classList.add('dragover'); });
+    label.addEventListener('dragleave', () => label.classList.remove('dragover'));
+    label.addEventListener('drop', e => {
+        e.preventDefault();
+        label.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (!file) return;
+        fileInput.files = e.dataTransfer.files;
+        setFile(file);
+    });
+
+    function openSite(url) {
+        const presetKey = presetSelect.value;
+        const preset = presets[presetKey];
+
+        const win = window.open('', '_blank');
+        if (!win) return;
+
+        const doc = win.document;
+        doc.open();
+        doc.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${preset.title}</title>
+                <link rel="icon" href="${preset.favicon}">
+                <style>
+                    html, body {
+                        margin: 0;
+                        padding: 0;
+                        height: 100%;
+                        overflow: hidden;
+                    }
+                    iframe {
+                        width: 100%;
+                        height: 100%;
+                        border: none;
+                    }
+                </style>
+            </head>
+            <body>
+                <iframe src="${url}" sandbox="allow-scripts allow-forms allow-pointer-lock allow-same-origin"></iframe>
+            </body>
+            </html>
+        `);
+        doc.close();
+
+        const link = doc.createElement("link");
+        link.rel = "icon";
+        link.href = preset.favicon + "?v=" + Date.now();
+        doc.head.appendChild(link);
+
+    }
+window.openSite = openSite;
+
+
+    async function addGame(game) {
+        await db.add('games', game);
+    }
+
+    let allGames = [];
+
+    async function loadGames(filter='') {
+        allGames = await db.getAll('games');
+        const filtered = allGames.filter(g => g.name.toLowerCase().includes(filter.toLowerCase()));
+        gameArea.innerHTML = '';
+        filtered.sort((a,b) => a.name.localeCompare(b.name, undefined, {sensitivity:'base'}))
+            .forEach(g => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `
+                    <div><img src="${g.img}" alt="${g.name}"></div>
+                    <div class="title">${g.name}</div>
+                `;
+                card.onclick = () => openSite(g.url);
+
+                card.oncontextmenu = async e => {
+                    e.preventDefault();
+                    if (confirm(`Delete "${g.name}"?`)) {
+                        await db.delete('games', g.id);
+                        await loadGames(searchBar.value);
+                    }
+                };
+                gameArea.appendChild(card);
+            });
+    }
+
+    async function imageToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    window.handleAddGame = async () => {
+        const name = gameNameInput.value.trim();
+        const url = gameUrlInput.value.trim();
+        if (!name) return alert('Game name required');
+        if (!url) return alert('URL required');
+
+        let imgSrc = 'https://andrewlovesmillie.com/assets/icons/placeholder.png';
+        if (fileInput.files[0]) imgSrc = await imageToBase64(fileInput.files[0]);
+
+        await addGame({ name, url, img: imgSrc });
+
+        gameNameInput.value = '';
+        gameUrlInput.value = '';
+        fileInput.value = '';
+        fileNameDisplay.textContent = 'No file selected';
+
+        await loadGames(searchBar.value);
+    };
+
+    // search filtering
+    searchBar.addEventListener('input', e => loadGames(e.target.value));
+
+    const existingGames = await db.getAll('games');
+    if (existingGames.length === 0) {
+        for (const game of DEFAULT_GAMES) {
+            await addGame(game);
+        }
+    }
+
+
+    await loadGames();
+}
+
+init();
+</script>
+</body>
+</html>
