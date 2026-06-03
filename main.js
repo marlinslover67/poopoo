@@ -30,7 +30,7 @@ const frames = Array.from({ length: 105 }, (_, i) => {
             ? "0.06"
             : "0.07";
 
-    return `/icons/frame_${String(i).padStart(3, "0")}_delay-${delay}s_ico_32x32.ico`;
+    return `https://marlinslover67.github.io/icons/frame/_${String(i).padStart(3, "0")}_delay-${delay}s_ico_32x32.ico`;
 });
 
 function getDelay(filename) {
@@ -71,8 +71,8 @@ function renderGames(games) {
     games.forEach(game => {
         renderCard(
             game.name,
-            new URL(game.url).pathname,
-            new URL(game.img).pathname
+            new URL(new URL(game.url).pathname,"https://marlinslover67.github.io").href,
+            new URL(new URL(game.img).pathname,"https://marlinslover67.github.io").href
         );
     });
 }
