@@ -1,6 +1,6 @@
     @font-face {
         font-family: 'argon';
-        src: url('./argon.ttf');
+        src: url('../argon.ttf');
     }
 
     body, html {
@@ -20,7 +20,7 @@
         width: 100%;
         height: 100%;
         background-color: rgb(7, 7, 7);  
-        background-image: url('./bg.png');
+        background-image: url('../bg.png');
         background-size: cover;
         background-position: center;
         
