@@ -1,10 +1,46 @@
+
+    function openSite(url) {
+
+        const win = window.open('', '_blank');
+        if (!win) return;
+
+        const doc = win.document;
+        doc.open();
+        doc.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>hi</title>
+                <link rel="icon" href="">
+                <style>
+                    html, body {
+                        margin: 0;
+                        padding: 0;
+                        height: 100%;
+                        overflow: hidden;
+                    }
+                    iframe {
+                        width: 100%;
+                        height: 100%;
+                        border: none;
+                    }
+                </style>
+            </head>
+            <body>
+                <iframe src="${url}"></iframe>
+            </body>
+            </html>
+        `);
+        doc.close();
+    }
+
 function renderCard(name, url, img) {
     const appList = document.getElementById('app-list');
 
     appList.innerHTML += `
         <div
             class="card"
-            onclick="window.location.href='${url}'"
+            onclick='openSite("${url}")'
         >
             <div class="vignette-edges" style="background-image: url('${img}')"></div>
 
@@ -94,5 +130,50 @@ async function init() {
     animateFavicon();
     changeTitle();
 }
+
+const searchBar = document.getElementById("universal-search");
+
+searchBar.addEventListener("input", () => {
+    const query = searchBar.value.toLowerCase();
+
+    document.querySelectorAll(".card").forEach(card => {
+        card.style.display =
+            card.textContent.toLowerCase().includes(query)
+                ? ""
+                : "none";
+    });
+});
+
+searchBar.addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+
+    const value = searchBar.value.trim();
+
+    if (!value) return;
+
+    const visibleCards = [...document.querySelectorAll(".card")]
+        .filter(card => card.style.display !== "none");
+
+    if (visibleCards.length === 1) {
+        visibleCards[0].click();
+        return;
+    }
+
+    let url = value;
+
+    if (
+        value.startsWith("http://") ||
+        value.startsWith("https://") ||
+        value.includes(".")
+    ) {
+        if (!value.startsWith("http")) {
+            url = "https://" + value;
+        }
+
+        openSite(url);
+    } else {
+        alert("type in an actual url bro");
+    }
+});
 
 init();
