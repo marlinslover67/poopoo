@@ -125,8 +125,7 @@
 
     #app-list {
 
-        width: 1400px;
-
+        width: min(1400px, 95vw);
         flex: 1 1 0;
 
         display:  grid;
@@ -214,4 +213,68 @@
     );
 
     pointer-events: none;
+}
+
+/* Tablets */
+@media (max-width: 1200px) {
+    #app-list {
+        width: 95vw;
+        padding: 20px;
+    }
+}
+
+/* Small tablets / large phones */
+@media (max-width: 768px) {
+    #universal-search {
+        width: 90vw;
+        max-width: 400px;
+    }
+
+    #app-list {
+        width: 95vw;
+
+        grid-template-columns:
+            repeat(auto-fit, minmax(160px, 1fr));
+
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 200px;
+        justify-self: center;
+    }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+    #top-bar span {
+        font-size: 14px;
+    }
+
+    #universal-search {
+        width: 95vw;
+        height: 40px;
+    }
+
+    #app-list {
+        width: 98vw;
+
+        grid-template-columns:
+            repeat(auto-fit, minmax(140px, 1fr));
+
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: none;
+        height: 120px;
+    }
+
+    .card span {
+        font-size: 14px;
+    }
 }
