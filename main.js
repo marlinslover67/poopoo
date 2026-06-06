@@ -73,8 +73,8 @@ function renderGames(games) {
             game.name,
             //new URL(new URL(game.url).pathname,"").href,
             //new URL(new URL(game.img).pathname,"").href
-            new URL(game.url).pathname,
-            new URL(game.img).pathname
+            "." + new URL(game.url).pathname,
+            "." + new URL(game.img).pathname
         );
     });
 }
